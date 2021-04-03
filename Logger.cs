@@ -17,7 +17,7 @@ namespace orbital_mechanics{
             debugStringBuilder.Clear();
         }
 
-        public string ToString(){
+        public override string ToString(){
             return debugStringBuilder.ToString();
         }
     }

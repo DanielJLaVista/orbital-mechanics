@@ -1,52 +1,88 @@
-
+using System;
 
 namespace orbital_mechanics{
-    public struct Position{
-        public double x_pos;
-        public double y_pos;
-        public double z_pos;
-    }
-    public struct Velocity{
-        public double x_vel;
-        public double y_vel;
-        public double z_vel;
-    }
-    public struct Acceleration{
-        public double x_acl;
-        public double y_acl;
-        public double z_acl;
-    }
-    class Planet{
-        private Position position;
-        private Velocity velocity;
-        private Acceleration acceleration;
+    public struct Cartesian{
+        public double x;
+        public double y;
+        public double z;
 
-        private Logger logger;
+        public Cartesian(double _x, double _y, double _z){
+            x=_x;
+            y=_y;
+            z=_z;
+        }
+    }
+    
+    class Planet{
+        private Cartesian _position;
+        private Cartesian _velocity;
+        private Cartesian _force;
+        private double _mass;
+
+        private Logger _logger;
 
         public Planet (){
-            logger = new Logger();
+            _position.x = 0.0;
+            _position.y = 0.0;
 
-            position.x_pos = 0.0;
-            position.y_pos = 0.0;
-            position.z_pos = 0.0;
+            _velocity.x = 0.0;
+            _velocity.y = 0.0;
 
-            velocity.x_vel = 0.0;
-            velocity.y_vel = 0.0;
-            velocity.z_vel = 0.0;
+            _force.x = 0.0;
+            _force.y = 0.0;
 
-            acceleration.x_acl = 0.0;
-            acceleration.y_acl = 0.0;
-            acceleration.z_acl = 0.0;
+            _mass = 0.0;
         }
-        
-        public string position_to_string(){
-            logger.Clear();
-            logger.AddLogPair("x_pos",position.x_pos);
-            logger.AddLogPair("y_pos",position.y_pos);
-            logger.AddLogPair("z_pos",position.z_pos);
+
+        public void UpdateForce(Planet other){
+            double xDistance = other.Position().x - this.Position().x;
+            double yDistance = other.Position().y - this.Position().y;
+            double totalDistance = Math.Sqrt(xDistance*xDistance + yDistance*yDistance);
             
-            return logger.ToString();
+            double forceMagnitude = (Constants.Gravitational_Constant * this.Mass() * other.Mass())/(totalDistance * totalDistance);
+            double forceXFraction = xDistance/totalDistance;
+            double forceYFraction = yDistance/totalDistance;
+
+            _force.x = forceMagnitude*forceXFraction;
+            _force.y = forceMagnitude*forceYFraction;
+       }
+
+       public void UpdateVelocity(double timeStep){
+           _velocity.x += this.Force().x / this.Mass() * timeStep;
+           _velocity.y += this.Force().y / this.Mass() * timeStep;
+       }
+
+       public void UpdatePosition(double timeStep){
+           _position.x += this.Velocity().x * timeStep;
+           _position.y += this.Velocity().y * timeStep;
+       }
+        public Cartesian Position(){
+            return _position;
         }
+
+        public Cartesian Velocity(){
+            return _velocity;
+        }
+
+        public Cartesian Force(){
+            return _force;
+        }
+
+        public void SetPosition(Cartesian position){
+            _position = position;
+        }
+
+        public void SetVelocity(Cartesian velocity){
+            _velocity = velocity;
+        }
+
+        public double Mass(){
+            return _mass;
+        }
+        public void SetMass(double mass){
+            _mass = mass;
+        }
+
     }
 
 }
