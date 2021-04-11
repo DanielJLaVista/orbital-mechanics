@@ -1,18 +1,18 @@
+using System.Text;
 namespace orbital_mechanics {
 	public class Cartesian {
 		private double _x = 0.0;
 		private double _y = 0.0;
 		private double _z = 0.0;
 		public Cartesian() {
-
 		}
 		public Cartesian(Cartesian cartesian) {
-			set(cartesian);
+			Set(cartesian);
 		}
 		public Cartesian(double x, double y, double z) {
-			setX(x);
-			setY(y);
-			setZ(z);
+			SetX(x);
+			SetY(y);
+			SetZ(z);
 		}
 		public double X() {
 			return _x;
@@ -23,19 +23,51 @@ namespace orbital_mechanics {
 		public double Z() {
 			return _z;
 		}
-		public void setX(double x) {
+		public void SetX(double x) {
 			_x = x;
 		}
-		public void setY(double y) {
+		public void SetY(double y) {
 			_y = y;
 		}
-		public void setZ(double z) {
+		public void SetZ(double z) {
 			_z = z;
 		}
-		public void set(Cartesian cartesian) {
-			setX(cartesian.X());
-			setY(cartesian.Y());
-			setZ(cartesian.Z());
+		public void Set(Cartesian cartesian) {
+			SetX(cartesian.X());
+			SetY(cartesian.Y());
+			SetZ(cartesian.Z());
+		}
+
+		public override bool Equals(object obj) {
+#warning Unit test equals procedure?
+			if (obj == null) {
+				return false;
+			}
+			if (!(obj is Cartesian)) {
+				return false;
+			}
+			return (DoubleComparison.Equals7DigitPrecision(X(), ((Cartesian)obj).X()))
+				&& (DoubleComparison.Equals7DigitPrecision(Y(), ((Cartesian)obj).Y()))
+				&& (DoubleComparison.Equals7DigitPrecision(Z(), ((Cartesian)obj).Z()));
+		}
+
+		public override int GetHashCode() {
+#warning Unit test hash code procedure?
+#warning Look into hash code builder implementation
+			int hash = 17;
+			hash = hash * 23 + X().GetHashCode();
+			hash = hash * 23 + Y().GetHashCode();
+			hash = hash * 23 + Z().GetHashCode();
+			return hash;
+		}
+
+		public string print() {
+#warning Need a better stringify approach
+			StringBuilder builder = new StringBuilder();
+			builder.Append("X: " + X() + "\n");
+			builder.Append("Y: " + Y() + "\n");
+			builder.Append("Z: " + Z() + "\n");
+			return builder.ToString();
 		}
 	}
 }
