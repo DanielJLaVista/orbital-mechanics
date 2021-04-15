@@ -39,7 +39,6 @@ namespace orbital_mechanics {
 		}
 
 		public override bool Equals(object obj) {
-#warning Unit test equals procedure?
 			if (obj == null) {
 				return false;
 			}
@@ -61,12 +60,15 @@ namespace orbital_mechanics {
 			return hash;
 		}
 
-		public string print() {
+		public string MakeString() {
 #warning Need a better stringify approach
+#warning Unit test make string function
 			StringBuilder builder = new StringBuilder();
-			builder.Append("X: " + X() + "\n");
-			builder.Append("Y: " + Y() + "\n");
-			builder.Append("Z: " + Z() + "\n");
+
+			builder.Append("{X: " + X() + " ");
+			builder.Append("Y: " + Y() + " ");
+			builder.Append("Z: " + Z() + "}");
+
 			return builder.ToString();
 		}
 	}

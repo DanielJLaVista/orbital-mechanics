@@ -25,7 +25,7 @@ namespace orbital_mechanics {
 		public void UpdateVelocity(double timeStep) {
 			double xVelocity = Velocity().X() + (Force().X() / Mass() * timeStep);
 			double yVelocity = Velocity().Y() + (Force().Y() / Mass() * timeStep);
-			double zVelocity = Velocity().Z() + (Force().Y() / Mass() * timeStep);
+			double zVelocity = Velocity().Z() + (Force().Z() / Mass() * timeStep);
 
 			Cartesian updatedVelocity = new Cartesian(xVelocity, yVelocity, zVelocity);
 			SetVelocity(updatedVelocity);
