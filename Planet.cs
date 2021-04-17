@@ -1,41 +1,51 @@
-using System;
+using System.Text;
 
 namespace orbital_mechanics {
-	public class Planet {
+    public class Planet {
 
-		private double _mass = 0.0;
+        private OrbitalBody _orbitalBody;
+        public Planet() {
+        }
 
-		private Kinematics _kinematics = new Kinematics();
+        public Planet(Planet planet) {
+            Set(planet);
+        }
 
-		public Planet() {
-		}
+        public void SetOrbitalBody(OrbitalBody orbitalBody) {
+            _orbitalBody = orbitalBody;
+        }
 
-		public Planet(Planet planet) {
-			Set(planet);
-		}
+        public OrbitalBody OrbitalBody() {
+            return _orbitalBody;
+        }
 
+        public void Set(Planet planet) {
+            SetOrbitalBody(planet.OrbitalBody());
+        }
 
+        public override bool Equals(object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (!(obj is Planet)) {
+                return false;
+            }
+            Planet planet = (Planet)obj;
+            return OrbitalBody().Equals(planet.OrbitalBody());
+        }
 
+        public override int GetHashCode() {
+            int hash = 17;
+            hash = hash * 23 + OrbitalBody().GetHashCode();
+            return hash;
+        }
 
-		public void SetKinematics(Kinematics kinematics) {
-			_kinematics = kinematics;
-		}
+        public string MakeString() {
+            StringBuilder builder = new StringBuilder();
 
-		public Kinematics Kinematics() {
-			return _kinematics;
-		}
+            builder.Append("{OrbitalBody: " + OrbitalBody().MakeString() + "\n");
 
-		public void SetMass(double mass) {
-			_mass = mass;
-		}
-
-		public double Mass() {
-			return _mass;
-		}
-
-		public void Set(Planet planet) {
-			SetKinematics(planet.Kinematics());
-			SetMass(planet.Mass());
-		}
-	}
+            return builder.ToString();
+        }
+    }
 }
