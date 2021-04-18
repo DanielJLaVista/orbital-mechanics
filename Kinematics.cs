@@ -81,6 +81,7 @@ namespace orbital_mechanics {
             return builder.ToString();
         }
 
+#warning needs unit tests
         public void UpdatePosition(double timeStep) {
             double xPosition = Position().X() + (Velocity().X() * timeStep);
             double yPosition = Position().Y() + (Velocity().Y() * timeStep);
@@ -90,6 +91,7 @@ namespace orbital_mechanics {
             SetPosition(updatedPosition);
         }
 
+#warning needs unit tests
         public void UpdateVelocity(double timeStep) {
             double xVelocity = Velocity().X() + (Acceleration().X() * timeStep);
             double yVelocity = Velocity().Y() + (Acceleration().Y() * timeStep);

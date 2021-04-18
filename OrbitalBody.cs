@@ -7,28 +7,50 @@ namespace orbital_mechanics {
         Cartesian _force = new Cartesian();
         double _mass = 0.0;
 
-        Kinematics Kinematics() {
+        public OrbitalBody() {
+
+        }
+
+        public OrbitalBody(OrbitalBody orbitalBody) {
+            Set(orbitalBody);
+        }
+
+        public OrbitalBody(Kinematics kinematics, Cartesian force, double mass) {
+            _kinematics = kinematics;
+            _force = force;
+            _mass = mass;
+        }
+
+        public Kinematics Kinematics() {
             return _kinematics;
         }
 
-        Cartesian Force() {
+        public Cartesian Force() {
             return _force;
         }
 
-        double Mass() {
+        public double Mass() {
             return _mass;
         }
 
-        void SetKinematics(Kinematics kinematics) {
+        public void SetKinematics(Kinematics kinematics) {
             _kinematics = kinematics;
         }
 
-        void SetForce(Cartesian force) {
+        public void SetForce(Cartesian force) {
             _force = force;
         }
-        void SetForce(double mass) {
+        public void SetMass(double mass) {
             _mass = mass;
         }
+
+        public void Set(OrbitalBody orbitalBody) {
+            SetKinematics(orbitalBody.Kinematics());
+            SetForce(orbitalBody.Force());
+            SetMass(orbitalBody.Mass());
+        }
+
+#warning needs unit tests
         public void UpdateForce(OrbitalBody other) {
             double xDistance = other.Kinematics().Position().X() - Kinematics().Position().X();
             double yDistance = other.Kinematics().Position().Y() - Kinematics().Position().Y();
@@ -44,6 +66,7 @@ namespace orbital_mechanics {
             SetForce(updatedForce);
         }
 
+#warning needs unit tests
         public void UpdateAcceleration() {
             double xAcceleration = Force().X() / Mass();
             double yAcceleration = Force().Y() / Mass();
