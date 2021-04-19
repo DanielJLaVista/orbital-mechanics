@@ -5,7 +5,7 @@ namespace orbital_mechanics {
     public class OrbitalBody {
         Kinematics _kinematics = new Kinematics();
         Cartesian _force = new Cartesian();
-        double _mass = 0.0;
+        double _mass = Double.Epsilon;
 
         public OrbitalBody() {
 
@@ -16,11 +16,53 @@ namespace orbital_mechanics {
         }
 
         public OrbitalBody(Kinematics kinematics, Cartesian force, double mass) {
-            _kinematics = kinematics;
-            _force = force;
-            _mass = mass;
+            SetKinematics(kinematics);
+            SetForce(force);
+            SetMass(mass);
         }
 
+        private double XDistanceBetweenBodies(OrbitalBody otherBody) {
+            return otherBody.Kinematics().Position().X() - Kinematics().Position().X();
+        }
+
+        private double YDistanceBetweenBodies(OrbitalBody otherBody) {
+            return otherBody.Kinematics().Position().Y() - Kinematics().Position().Y();
+        }
+        private double ZDistanceBetweenBodies(OrbitalBody otherBody) {
+            return otherBody.Kinematics().Position().Z() - Kinematics().Position().Z();
+        }
+
+        private double TotalDistanceBetweenBodies(OrbitalBody otherBody) {
+            double xDistance = XDistanceBetweenBodies(otherBody);
+            double yDistance = YDistanceBetweenBodies(otherBody);
+            double zDistance = ZDistanceBetweenBodies(otherBody);
+
+            double totalDistance = Math.Sqrt(xDistance * xDistance + yDistance * yDistance + zDistance * zDistance);
+
+            return (totalDistance != 0.0) ? totalDistance : Double.Epsilon;
+        }
+
+        private double ForceMagnitudeBetweenBodies(OrbitalBody otherBody) {
+            double totalDistance = TotalDistanceBetweenBodies(otherBody);
+
+            return (Constants.Gravitational_Constant * Mass() * otherBody.Mass()) / (totalDistance * totalDistance);
+        }
+
+        private double XDistanceFractionBetweenBodies(OrbitalBody otherBody) {
+            double xDistance = XDistanceBetweenBodies(otherBody);
+            double totalDistance = TotalDistanceBetweenBodies(otherBody);
+            return xDistance / totalDistance;
+        }
+        private double YDistanceFractionBetweenBodies(OrbitalBody otherBody) {
+            double yDistance = YDistanceBetweenBodies(otherBody);
+            double totalDistance = TotalDistanceBetweenBodies(otherBody);
+            return yDistance / totalDistance;
+        }
+        private double ZDistanceFractionBetweenBodies(OrbitalBody otherBody) {
+            double zDistance = ZDistanceBetweenBodies(otherBody);
+            double totalDistance = TotalDistanceBetweenBodies(otherBody);
+            return zDistance / totalDistance;
+        }
         public Kinematics Kinematics() {
             return _kinematics;
         }
@@ -41,7 +83,10 @@ namespace orbital_mechanics {
             _force = force;
         }
         public void SetMass(double mass) {
-            _mass = mass;
+            if (mass != 0) {
+                _mass = mass;
+            }
+#warning raise exception if so?
         }
 
         public void Set(OrbitalBody orbitalBody) {
@@ -51,18 +96,14 @@ namespace orbital_mechanics {
         }
 
 #warning needs unit tests
-        public void UpdateForce(OrbitalBody other) {
-            double xDistance = other.Kinematics().Position().X() - Kinematics().Position().X();
-            double yDistance = other.Kinematics().Position().Y() - Kinematics().Position().Y();
-            double zDistance = other.Kinematics().Position().Z() - Kinematics().Position().Z();
-            double totalDistance = Math.Sqrt(xDistance * xDistance + yDistance * yDistance + zDistance * zDistance);
+        public void UpdateForce(OrbitalBody otherBody) {
+#warning If total distance is zero do we need to do something to avoid NaN??
+            double xDistanceFraction = XDistanceBetweenBodies(otherBody);
+            double yDistanceFraction = YDistanceBetweenBodies(otherBody);
+            double zDistanceFraction = ZDistanceBetweenBodies(otherBody);
+            double forceMagnitude = ForceMagnitudeBetweenBodies(otherBody);
 
-            double forceMagnitude = (Constants.Gravitational_Constant * Mass() * other.Mass()) / (totalDistance * totalDistance);
-            double forceXFraction = xDistance / totalDistance;
-            double forceYFraction = yDistance / totalDistance;
-            double forceZFraction = zDistance / totalDistance;
-
-            Cartesian updatedForce = new Cartesian(forceMagnitude * forceXFraction, forceMagnitude * forceYFraction, forceMagnitude * forceZFraction);
+            Cartesian updatedForce = new Cartesian(forceMagnitude * xDistanceFraction, forceMagnitude * yDistanceFraction, forceMagnitude * zDistanceFraction);
             SetForce(updatedForce);
         }
 
