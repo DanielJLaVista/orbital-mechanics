@@ -98,5 +98,10 @@ namespace orbital_mechanics {
             Cartesian updatedVelocity = new Cartesian(xVelocity, yVelocity, zVelocity);
             SetVelocity(updatedVelocity);
         }
+
+        public void UpdateKinematics(double timeStep) {
+            UpdatePosition(timeStep);
+            UpdateVelocity(timeStep);
+        }
     }
 }

@@ -45,9 +45,9 @@ namespace orbital_mechanics {
             if (!(obj is Cartesian)) {
                 return false;
             }
-            return (DoubleComparison.Equals7DigitPrecision(X(), ((Cartesian)obj).X()))
-                && (DoubleComparison.Equals7DigitPrecision(Y(), ((Cartesian)obj).Y()))
-                && (DoubleComparison.Equals7DigitPrecision(Z(), ((Cartesian)obj).Z()));
+            return (DoubleComparison.RobustDoubleEquals(X(), ((Cartesian)obj).X()))
+                && (DoubleComparison.RobustDoubleEquals(Y(), ((Cartesian)obj).Y()))
+                && (DoubleComparison.RobustDoubleEquals(Z(), ((Cartesian)obj).Z()));
         }
 
         public override int GetHashCode() {

@@ -3,7 +3,7 @@ using System.Text;
 namespace orbital_mechanics {
     public class Planet {
 
-        private OrbitalBody _orbitalBody;
+        private OrbitalBody _orbitalBody = new OrbitalBody();
         public Planet() {
         }
 
