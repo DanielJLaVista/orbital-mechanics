@@ -1,141 +1,109 @@
 using System;
+using System.Numerics;
+using System.Reflection.Metadata;
 using System.Text;
+using Terminal.Gui;
 
-namespace orbital_mechanics {
-    public class OrbitalBody {
-        Kinematics _kinematics = new Kinematics();
-        Cartesian _force = new Cartesian();
-        double _mass = double.Epsilon;
+namespace orbital_mechanics
+{
+    public class OrbitalBody
+    {
+        private const int XIndex = 0;
+        private const int YIndex = 1;
+        private const int ZIndex = 2;
+        private const int XVelIndex = 3;
+        private const int YVelIndex = 4;
+        private const int ZVelIndex = 5;
+        private const int MassIndex = 6;
 
-        public OrbitalBody() {
+        private float[] e = { 0, 0, 0, 0, 0, 0, float.Epsilon };
+
+        public OrbitalBody()
+        {
 
         }
 
-        public OrbitalBody(OrbitalBody orbitalBody) {
+        public OrbitalBody(OrbitalBody orbitalBody)
+        {
             Set(orbitalBody);
         }
 
-        public OrbitalBody(Kinematics kinematics, Cartesian force, double mass) {
-            SetKinematics(kinematics);
-            SetForce(force);
-            SetMass(mass);
-        }
-
-        public Kinematics Kinematics() {
-            return _kinematics;
-        }
-
-        public Cartesian Force() {
-            return _force;
-        }
-
-        public double Mass() {
-            return _mass;
-        }
-
-        public void SetKinematics(Kinematics kinematics) {
-            _kinematics = kinematics;
-        }
-
-        public void SetForce(Cartesian force) {
-            _force = force;
-        }
-        public void SetMass(double mass) {
-            if (mass != 0) {
-                _mass = mass;
-            }
-#warning raise exception if so?
-        }
-
-        public void Set(OrbitalBody orbitalBody) {
-            SetKinematics(orbitalBody.Kinematics());
-            SetForce(orbitalBody.Force());
+        public void Set(OrbitalBody orbitalBody)
+        {
+            SetPosition(orbitalBody.Position());
+            SetVelocity(orbitalBody.Velocity());
             SetMass(orbitalBody.Mass());
         }
-
-        public double DistanceFractionBetweenBodiesOnAxis(Func<double> otherBodyPositionOnAxis, Func<double> thisBodyPositionOnAxis, double totalDistance) {
-            double axisDistance = otherBodyPositionOnAxis() - thisBodyPositionOnAxis();
-            return axisDistance / totalDistance;
+        public float Mass()
+        {
+            return e[MassIndex];
         }
 
-#warning needs unit tests
-        public double TotalDistanceBetweenBodies(OrbitalBody otherBody) {
-            double xDistance = otherBody.Kinematics().Position().X() - this.Kinematics().Position().X();
-            double yDistance = otherBody.Kinematics().Position().Y() - this.Kinematics().Position().Y();
-            double zDistance = otherBody.Kinematics().Position().Z() - this.Kinematics().Position().Z();
-
-            double totalDistance = Math.Sqrt(xDistance * xDistance + yDistance * yDistance + zDistance * zDistance);
-
-            return (totalDistance != 0.0) ? totalDistance : Double.Epsilon;
+        public Vector3 Position()
+        {
+            Vector3 pos = new(e[XIndex], e[YIndex], e[ZIndex]);
+            return pos;
         }
 
-#warning needs unit tests
-        public double ForceMagnitudeBetweenBodies(OrbitalBody otherBody) {
-            double totalDistance = TotalDistanceBetweenBodies(otherBody);
-
-            return (Constants.Gravitational_Constant * Mass() * otherBody.Mass()) / (totalDistance * totalDistance);
+        public Vector3 Velocity()
+        {
+            Vector3 vel = new(e[XVelIndex], e[YVelIndex], e[ZVelIndex]);
+            return vel;
         }
 
-#warning needs unit tests
-        public void UpdateForce(OrbitalBody otherBody) {
-            double totalDistance = TotalDistanceBetweenBodies(otherBody);
-            Console.WriteLine("dist: " + totalDistance);
-            double xDistanceFraction = DistanceFractionBetweenBodiesOnAxis(otherBody.Kinematics().Position().X, this.Kinematics().Position().X, totalDistance);
-            Console.WriteLine("xFrac: " + xDistanceFraction);
-            double yDistanceFraction = DistanceFractionBetweenBodiesOnAxis(otherBody.Kinematics().Position().Y, this.Kinematics().Position().Y, totalDistance);
-            double zDistanceFraction = DistanceFractionBetweenBodiesOnAxis(otherBody.Kinematics().Position().Z, this.Kinematics().Position().Z, totalDistance);
-
-            double forceMagnitude = ForceMagnitudeBetweenBodies(otherBody);
-
-
-            Cartesian updatedForce = new Cartesian(forceMagnitude * xDistanceFraction, forceMagnitude * yDistanceFraction, forceMagnitude * zDistanceFraction);
-            SetForce(updatedForce);
+        public void SetPosition(Vector3 position)
+        {
+            e[XIndex] = position[0];
+            e[YIndex] = position[1];
+            e[ZIndex] = position[2];
         }
 
-        public void UpdateAcceleration() {
-            double xAcceleration = Force().X() / Mass();
-            double yAcceleration = Force().Y() / Mass();
-            double zAcceleration = Force().Z() / Mass();
-            Cartesian updatedAcceleration = new Cartesian(xAcceleration, yAcceleration, zAcceleration);
-
-            _kinematics.SetAcceleration(updatedAcceleration);
+        public void SetVelocity(Vector3 velocity)
+        {
+            e[XVelIndex] = velocity[3];
+            e[YVelIndex] = velocity[4];
+            e[ZVelIndex] = velocity[5];
         }
 
-        public override bool Equals(object obj) {
-            if (obj == null) {
+        public void SetMass(float mass)
+        {
+            e[MassIndex] = mass;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
                 return false;
             }
-            if (!(obj is OrbitalBody)) {
+            if (obj is not OrbitalBody)
+            {
                 return false;
             }
             OrbitalBody orbitalBody = (OrbitalBody)obj;
-            return Kinematics().Equals(orbitalBody.Kinematics())
-                && Force().Equals(orbitalBody.Force())
+            return Position().Equals(orbitalBody.Position())
+                && Velocity().Equals(orbitalBody.Velocity())
                 && Mass().Equals(orbitalBody.Mass());
         }
 
-        public override int GetHashCode() {
+        public override int GetHashCode()
+        {
             int hash = 17;
-            hash = hash * 23 + Kinematics().GetHashCode();
-            hash = hash * 23 + Force().GetHashCode();
+            hash = hash * 23 + Position().GetHashCode();
+            hash = hash * 23 + Velocity().GetHashCode();
             hash = hash * 23 + Mass().GetHashCode();
             return hash;
         }
 
-        public string MakeString() {
-            StringBuilder builder = new StringBuilder();
+        public string MakeString()
+        {
+            StringBuilder builder = new();
 
-            builder.Append("{Kinematics: " + Kinematics().MakeString() + "\n");
-            builder.Append("Force: " + Force().MakeString() + "\n");
+            builder.Append("{Position: {" + Position()[0] + " " + Position()[1] + " " + Position()[2] + "}\n");
+            builder.Append("Velocity: {" + Velocity()[0] + " " + Velocity()[1] + " " + Velocity()[2] + "}\n");
             builder.Append("Mass: " + Mass() + "}");
 
             return builder.ToString();
-        }
-
-        public void UpdateOrbitalBody(OrbitalBody otherBody, double timeStep) {
-            Kinematics().UpdateKinematics(timeStep);
-            UpdateAcceleration();
-            UpdateForce(otherBody);
         }
     }
 }

@@ -2,11 +2,13 @@
 
 
 
-namespace orbital_mechanics {
-    class Program {
-        static void Main(string[] args) {
+namespace orbital_mechanics
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
 
-            GraphicsHandler graphics = new GraphicsHandler();
             Console.WriteLine("Hello World!");
             Planet planet1 = new Planet();
             Planet planet2 = new Planet();
@@ -19,9 +21,8 @@ namespace orbital_mechanics {
             // for (int i = 0; i < 10; i++) {
 
 
-            while (graphics.Window().Exists) {
-                graphics.Window().PumpEvents();
-                graphics.Draw();
+            while (true)
+            {
 
                 planet1.OrbitalBody().UpdateOrbitalBody(planet2.OrbitalBody(), 1.0);
                 planet2.OrbitalBody().UpdateOrbitalBody(planet1.OrbitalBody(), 1.0);
@@ -29,7 +30,6 @@ namespace orbital_mechanics {
                 Console.WriteLine(planet1.OrbitalBody().Force().MakeString());
                 // Console.WriteLine(planet2.OrbitalBody().Kinematics().Position().MakeString());
             }
-            graphics.DisposeResources();
             // }
         }
 
