@@ -51,18 +51,20 @@ namespace orbital_mechanics
             return vel;
         }
 
-        public void SetPosition(Vector3 position)
+        public OrbitalBody SetPosition(Vector3 position)
         {
             e[XIndex] = position[0];
             e[YIndex] = position[1];
             e[ZIndex] = position[2];
+            return this;
         }
 
-        public void SetVelocity(Vector3 velocity)
+        public OrbitalBody SetVelocity(Vector3 velocity)
         {
-            e[XVelIndex] = velocity[3];
-            e[YVelIndex] = velocity[4];
-            e[ZVelIndex] = velocity[5];
+            e[XVelIndex] = velocity[0];
+            e[YVelIndex] = velocity[1];
+            e[ZVelIndex] = velocity[2];
+            return this;
         }
 
         public void SetMass(float mass)
